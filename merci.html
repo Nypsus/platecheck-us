@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're in — PlateCheck</title>
+<style>
+:root{--bg:#101418;--card:#161c22;--line:#26303a;--fg:#e8edf2;--mut:#9aa7b4;--acc:#ff8a3d;--ok:#3ddc97}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+main{max-width:620px;width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:34px 30px}
+.badge{display:inline-block;background:#1a4d36;color:var(--ok);border:1px solid #2a6b4c;border-radius:20px;padding:5px 14px;font-size:.8rem;font-weight:700;margin-bottom:16px}
+h1{font-size:1.6rem;margin-bottom:10px}
+p{color:var(--mut);margin:10px 0}
+b{color:var(--fg)}
+ol{margin:14px 0 14px 20px;color:var(--mut)}
+ol li{margin:8px 0}
+.step{background:#0d1116;border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin:12px 0}
+.step b{display:block;margin-bottom:4px;color:var(--fg)}
+.step span{font-size:.92rem;color:var(--mut);display:block}
+.cta{display:inline-block;background:var(--acc);color:#101418;font-weight:800;border-radius:9px;padding:13px 22px;text-decoration:none;margin-top:6px}
+.cta:hover{opacity:.92}
+.hint{font-size:.82rem}
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <span class="badge">✓ Payment confirmed</span>
+    <h1>You're in — your first report in 72 hours.</h1>
+    <p>Thank you for subscribing to <b>PlateCheck</b>. Here is exactly what happens next:</p>
+
+    <div class="step">
+      <b>1 · Check your inbox</b>
+      <span>We just sent you an email with instructions from <b>nypsus.business@gmail.com</b>. If you don't see it within 5 minutes, check spam.</span>
+    </div>
+    <div class="step">
+      <b>2 · Send us your settlements</b>
+      <span>Reply to that email with the last 4 weeks of settlements (CSV or PDF) from DoorDash, Uber Eats, Grubhub and/or Postmates. No password, no account connection — just the reports the platforms already send you.</span>
+    </div>
+    <div class="step">
+      <b>3 · Receive your report</b>
+      <span>Within 72 hours you get one report per platform: every over-charged commission, double fee or unjustified refund — itemized, quantified, with the evidence. Send it to the platform and get paid back.</span>
+    </div>
+
+    <p>Anything unclear? Reply to the email or write to <a href="mailto:nypsus.business@gmail.com" style="color:var(--acc)">nypsus.business@gmail.com</a> — we answer within 24 business hours.</p>
+    <a class="cta" href="https://nypsus.github.io/platecheck-us/">Back to PlateCheck</a>
+  </div>
+</main>
+</body>
+</html>
