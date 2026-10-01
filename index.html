@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlateCheck — Your delivery platforms owe you money</title>
+<meta name="description" content="Find out what DoorDash, Uber Eats, Grubhub and Postmates owe you: over-charged commissions, double fees, unfair refunds. Itemized report + evidence file. $39/month, no commitment.">
+<style>
+:root{--bg:#101418;--card:#161c22;--line:#26303a;--fg:#e8edf2;--mut:#9aa7b4;--acc:#ff8a3d;--ok:#3ddc97;--bad:#ff5d5d}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.55;overflow-x:hidden}
+main{max-width:960px;margin:0 auto;padding:24px 18px 60px}
+header{text-align:center;padding:34px 0 8px}
+.eyebrow{display:inline-block;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;border:1px solid rgba(255,138,61,.35);border-radius:20px;padding:5px 14px;margin-bottom:10px}
+.logo{font-size:1.7rem;font-weight:800;letter-spacing:.5px}
+.logo span{color:var(--acc)}
+h1{font-size:1.9rem;line-height:1.25;margin:14px 0 10px}
+h2{font-size:1.4rem;margin:30px 0 10px}
+p{color:var(--mut);margin:8px 0}
+.sub{font-size:1.04rem;max-width:660px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:18px 0}
+.acc{color:var(--acc);font-weight:700}
+.ok{color:var(--ok)}
+.bad{color:var(--bad)}
+.cta{display:inline-block;background:var(--acc);color:#101418;font-weight:800;border-radius:9px;padding:14px 24px;text-decoration:none;margin:12px 6px 6px 0;font-size:1.02rem;box-shadow:0 4px 18px rgba(255,138,61,.22);transition:transform .15s, box-shadow .15s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(255,138,61,.38)}
+.cta.sec{background:transparent;border:1px solid var(--line);color:var(--fg);box-shadow:none}
+form{margin-top:14px}
+label{display:block;font-size:.9rem;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;background:#0d1116;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:10px 12px;font-size:1rem}
+button{background:var(--acc);color:#101418;border:none;border-radius:8px;padding:12px 18px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px}
+.hint{font-size:.82rem;color:var(--mut)}
+.step{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:start;margin-top:16px}
+.step:first-child{margin-top:4px}
+.step .ico{width:56px;height:56px;border-radius:14px;background:#0d1116;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step b{display:block;color:var(--fg);margin-bottom:3px}
+.step span{font-size:.9rem;color:var(--mut)}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin:10px 0}
+.faq summary{font-weight:700;cursor:pointer}
+.faq p{margin-top:8px}
+.avis{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin:10px 0}
+.avis b{color:var(--fg)}
+.stars{color:#ffb400;letter-spacing:2px}
+footer{margin-top:40px;text-align:center;font-size:.82rem;color:var(--mut)}
+/* ——— Calculateur : 1 carte par plateforme, jamais de dépassement ——— */
+.plats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+.plat{background:#0d1116;border:1px solid var(--line);border-radius:11px;padding:14px}
+.plat b{display:block;margin-bottom:8px}
+.plat label{font-size:.8rem;margin:8px 0 2px}
+.plat input{width:100%;background:#0b1016;border:1px solid #3a4654;border-radius:6px;padding:7px 9px;color:var(--fg);font-size:.92rem;text-align:right}
+.plat input:focus{outline:none;border-color:var(--acc)}
+.plat .res{margin-top:10px;font-weight:800;color:var(--acc);text-align:right;font-size:1.05rem}
+.plat .res.zero{color:var(--mut)}
+#cb-out{border:1px solid var(--acc);background:#201409;border-radius:12px;padding:16px;margin-top:16px;display:none;text-align:center}
+#cb-total{font-size:1.5rem}
+#cb-annee{font-size:.95rem;margin-top:4px}
+#cb-annee b{color:var(--fg)}
+.badge{display:inline-block;background:#1a4d36;color:var(--ok);border:1px solid #2a6b4c;border-radius:20px;padding:4px 12px;font-size:.8rem;font-weight:700}
+/* ——— étoiles cliquables (avis clients) ——— */
+.stars-in{display:flex;gap:4px;margin:8px 0 4px}
+.stars-in .star{background:transparent;border:none;cursor:pointer;font-size:1.7rem;line-height:1;color:#3a4654;padding:2px 4px;transition:color .15s,transform .1s;margin:0}
+.stars-in .star:hover{transform:scale(1.15)}
+.stars-in .star.on{color:#ffb400}
+.stars-in .star:focus{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+/* ——— schémas (SVG authorés, data-graphics) ——— */
+.fig{border:1px solid var(--line);background:#0d1116;border-radius:14px;padding:8px;margin:18px 0 4px}
+.fig svg{width:100%;height:auto;display:block}
+.figcap{font-size:.78rem;color:var(--mut);text-align:center;margin:8px 0 2px}
+.herofig{margin:22px auto 6px;max-width:700px}
+/* ——— effets de scroll (progressive : tout reste visible sans JS) ——— */
+.rv{will-change:opacity,transform}
+@media(max-width:640px){h1{font-size:1.5rem}.plats{grid-template-columns:1fr}.step{grid-template-columns:48px 1fr;gap:12px}.step .ico{width:48px;height:48px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">SaaS · Restaurants · Cancel anytime</div>
+  <div class="logo">Plate<span>Check</span></div>
+  <h1>Your delivery platforms owe you money.</h1>
+  <p class="sub">DoorDash, Uber Eats, Grubhub and Postmates calculate their commissions themselves and pay you whatever they decide. When the rate they charge exceeds your contract, a fee is charged twice, or a refund is wrongly deducted, nobody tells you. <b style="color:var(--fg)">PlateCheck finds it — and hands you the file to get your money back.</b></p>
+
+  <div class="fig herofig rv">
+    <svg viewBox="0 0 700 240" role="img" aria-label="Schéma : la plateforme prélève au-delà du contrat, l'écart part en silence, PlateCheck le détecte et le chiffre">
+      <!-- fond -->
+      <rect width="700" height="240" rx="14" fill="#0b1016"/>
+      <rect width="700" height="240" rx="14" fill="none" stroke="#26303a"/>
+      <!-- acteurs -->
+      <g font-family="Segoe UI,sans-serif">
+        <rect x="28" y="78" width="128" height="84" rx="10" fill="#161c22" stroke="#3a4654"/>
+        <text x="92" y="112" text-anchor="middle" font-size="22">🍽️</text>
+        <text x="92" y="140" text-anchor="middle" font-size="11" fill="#9aa7b4">Your restaurant</text>
+        <rect x="286" y="78" width="128" height="84" rx="10" fill="#161c22" stroke="#3a4654"/>
+        <text x="350" y="112" text-anchor="middle" font-size="22">🛵</text>
+        <text x="350" y="140" text-anchor="middle" font-size="11" fill="#9aa7b4">Platform</text>
+        <rect x="544" y="78" width="128" height="84" rx="10" fill="#161c22" stroke="#3a4654"/>
+        <text x="608" y="112" text-anchor="middle" font-size="22">👤</text>
+        <text x="608" y="140" text-anchor="middle" font-size="11" fill="#9aa7b4">Customer</text>
+      </g>
+      <!-- flux commandes -->
+      <path d="M156 120 L286 120" stroke="#3a4654" stroke-width="2" stroke-dasharray="6 5" fill="none"/>
+      <path d="M414 120 L544 120" stroke="#3a4654" stroke-width="2" stroke-dasharray="6 5" fill="none"/>
+      <!-- commission facturée vs contrat -->
+      <text x="350" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="#ff5d5d">charged: 30%</text>
+      <path d="M350 56 L350 78" stroke="#ff5d5d" stroke-width="2"/>
+      <path d="M120 56 L350 56" stroke="#ff5d5d" stroke-width="2" stroke-dasharray="5 4"/>
+      <path d="M120 56 L120 78" stroke="#ff5d5d" stroke-width="2"/>
+      <text x="120" y="40" text-anchor="middle" font-size="12" font-weight="700" fill="#3ddc97">contract: 25%</text>
+      <!-- écart -->
+      <path d="M350 162 L350 188" stroke="#ff8a3d" stroke-width="2.5"/>
+      <rect x="128" y="190" width="444" height="34" rx="17" fill="#ff8a3d"/>
+      <text x="350" y="212" text-anchor="middle" font-size="13" font-weight="800" fill="#101418">gap detected = 5% × your revenue → itemized and claimable</text>
+    </svg>
+    <p class="figcap">Your platform charges whatever it decides — not what your contract says. The gap is your money.</p>
+  </div>
+
+  <p class="rv"><a class="cta" href="#demo">Estimate my losses — free</a> <a class="cta sec" href="#tarifs">See pricing</a></p>
+</header>
+
+<div class="card rv">
+  <b>Concrete example</b>
+  <p>Your DoorDash contract says <b style="color:var(--fg)">25%</b> commission. On this month's settlement, DoorDash charged you <b style="color:var(--fg)">30%</b>. You did <b style="color:var(--fg)">$6,000</b> in revenue on the platform.</p>
+  <p>Gap = 5% × $6,000 = <b class="bad">$300 lost this month</b> — and you never see it, because each order is mixed into the next one.</p>
+  <p class="acc">Across 4 platforms, that adds up to hundreds of dollars a month vanishing silently.</p>
+</div>
+
+<h2>How it works</h2>
+<div class="card rv">
+  <div class="step">
+    <div class="ico">
+      <svg viewBox="0 0 48 48" width="34" height="34" role="img" aria-label="étape 1 : envoi des liquidations">
+        <rect x="6" y="12" width="36" height="26" rx="4" fill="none" stroke="#ff8a3d" stroke-width="2.4"/>
+        <path d="M6 20 L24 28 L42 20" fill="none" stroke="#ff8a3d" stroke-width="2.4"/>
+      </svg>
+    </div>
+    <div><b>1 · You send your settlements</b><span>The last 4 weeks, as CSV or PDF (DoorDash, Uber Eats, Grubhub, Postmates). No connection to your accounts, no password, no installation.</span></div>
+  </div>
+  <div class="step">
+    <div class="ico">
+      <svg viewBox="0 0 48 48" width="34" height="34" role="img" aria-label="étape 2 : vérification ligne à ligne">
+        <path d="M10 24 L20 34 L38 14" fill="none" stroke="#3ddc97" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div><b>2 · We check every line</b><span>Every order is checked against YOUR contract rate. A commission that is too high, a double fee, a refund without proof → we flag it and quantify it.</span></div>
+  </div>
+  <div class="step">
+    <div class="ico">
+      <svg viewBox="0 0 48 48" width="34" height="34" role="img" aria-label="étape 3 : reçu du dossier de preuves">
+        <rect x="9" y="8" width="30" height="32" rx="4" fill="none" stroke="#ff8a3d" stroke-width="2.4"/>
+        <path d="M16 18 H 32 M16 26 H 32" stroke="#9aa7b4" stroke-width="2.4"/>
+        <path d="M26 32 H 32" stroke="#ff8a3d" stroke-width="2.4"/>
+      </svg>
+    </div>
+    <div><b>3 · You receive the file</b><span>One report per platform: the exact amount you can claim, line by line, with the evidence. You send it, you get paid back.</span></div>
+  </div>
+</div>
+
+<div class="card rv">
+  <h2 style="margin-top:0">Free demo — how much do you lose every month?</h2>
+  <p class="hint">Replace the example numbers with yours: your monthly revenue per platform, the rate you are charged today, the rate signed in your contract. The result updates by itself.</p>
+  <div class="plats">
+    <div class="plat"><b>DoorDash</b>
+      <label>Monthly revenue ($)</label><input id="g_ca" type="number" value="6000" min="0" step="500">
+      <label>Rate charged (%)</label><input id="g_reel" type="number" value="30" min="0" step="0.5">
+      <label>Contract rate (%)</label><input id="g_contrat" type="number" value="25" min="0" step="0.5">
+      <div class="res" id="g_res">—</div>
+    </div>
+    <div class="plat"><b>Uber Eats</b>
+      <label>Monthly revenue ($)</label><input id="u_ca" type="number" value="4500" min="0" step="500">
+      <label>Rate charged (%)</label><input id="u_reel" type="number" value="30" min="0" step="0.5">
+      <label>Contract rate (%)</label><input id="u_contrat" type="number" value="25" min="0" step="0.5">
+      <div class="res" id="u_res">—</div>
+    </div>
+    <div class="plat"><b>Grubhub</b>
+      <label>Monthly revenue ($)</label><input id="d_ca" type="number" value="3000" min="0" step="500">
+      <label>Rate charged (%)</label><input id="d_reel" type="number" value="32" min="0" step="0.5">
+      <label>Contract rate (%)</label><input id="d_contrat" type="number" value="28" min="0" step="0.5">
+      <div class="res" id="d_res">—</div>
+    </div>
+    <div class="plat"><b>Postmates</b>
+      <label>Monthly revenue ($)</label><input id="j_ca" type="number" value="1500" min="0" step="500">
+      <label>Rate charged (%)</label><input id="j_reel" type="number" value="18" min="0" step="0.5">
+      <label>Contract rate (%)</label><input id="j_contrat" type="number" value="15" min="0" step="0.5">
+      <div class="res" id="j_res">—</div>
+    </div>
+  </div>
+  <div id="cb-out">
+    <div class="badge">Estimate based on YOUR numbers</div>
+    <div class="acc" id="cb-total" style="font-size:1.5rem;margin-top:6px">—</div>
+    <p id="cb-annee" style="font-size:.95rem">—</p>
+  </div>
+</div>
+
+<div class="card rv">
+  <b>What we deliver every month</b>
+  <div class="fig">
+    <svg viewBox="0 0 700 210" role="img" aria-label="Schéma d'un exemple de rapport : quatre plateformes avec leurs écarts, un total mensuel, un dossier de preuves">
+      <rect width="700" height="210" rx="14" fill="#0b1016"/>
+      <g font-family="Segoe UI,sans-serif">
+        <rect x="26" y="30" width="150" height="64" rx="10" fill="#161c22" stroke="#3a4654"/>
+        <text x="101" y="58" text-anchor="middle" font-size="12" fill="#e8edf2">🟡 DoorDash</text>
+        <text x="101" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#ff5d5d">-300,00</text>
+        <rect x="188" y="30" width="150" height="64" rx="10" fill="#161c22" stroke="#3a4654"/>
+        <text x="263" y="58" text-anchor="middle" font-size="12" fill="#e8edf2">🟢 Uber Eats</text>
+        <text x="263" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#ff5d5d">-225,00</text>
+        <rect x="350" y="30" width="150" height="64" rx="10" fill="#161c22" stroke="#3a4654"/>
+        <text x="425" y="58" text-anchor="middle" font-size="12" fill="#e8edf2">🟣 Grubhub</text>
+        <text x="425" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#ff5d5d">-120,00</text>
+        <rect x="512" y="30" width="150" height="64" rx="10" fill="#161c22" stroke="#3a4654"/>
+        <text x="587" y="58" text-anchor="middle" font-size="12" fill="#e8edf2">🟠 Postmates</text>
+        <text x="587" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#ff5d5d">-45,00</text>
+      </g>
+      <path d="M350 108 L350 128" stroke="#3a4654" stroke-width="2"/>
+      <rect x="226" y="130" width="248" height="42" rx="21" fill="#ff8a3d"/>
+      <text x="350" y="149" text-anchor="middle" font-size="14" font-weight="800" fill="#101418">Total gap: $690 / month</text>
+      <text x="350" y="186" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3ddc97">+ evidence file ready to send with your claim</text>
+    </svg>
+    <p class="figcap">Sample report: each platform, its gaps, the recoverable total, the evidence.</p>
+  </div>
+  <p class="hint">With the line-by-line detail and evidence workbook (order number, applied rate, contracted rate, gap calculation) — usable when you claim.</p>
+</div>
+
+<h2>Pricing</h2>
+<div class="card rv">
+  <b>PlateCheck Analysis — $39/month</b>
+  <p>Every month: full verification of your settlements (up to 4 platforms), itemized gap report + evidence file ready for your claim, tracking of recovered amounts per platform.</p>
+  <p class="hint">No commitment, cancel in one click. For reference: a firm charges $150–400/month for the same check, and your 2–4 hours a week of manual review cost you far more than $39.</p>
+  <p><a class="cta" href="https://buy.stripe.com/5kQ3co6hJ9Cr9Hj6bB3sI0q" rel="noopener" target="_blank">💳 Subscribe to PlateCheck — $39/month</a></p>
+</div>
+
+<h2>Frequently asked questions</h2>
+<div class="faq">
+  <details><summary>How do I know if the commission I am charged exceeds my contract?</summary>
+  <p>Your settlement shows the rate applied to each order; your contract shows the negotiated rate. The difference, multiplied by volume, is what you can claim. Line-by-line verification is our job, not yours.</p></details>
+  <details><summary>What if the platform refuses?</summary>
+  <p>You keep the file: the settlement lines and the gap calculation. The contracted rate is enforceable, and an internal audit request with itemized evidence succeeds far more often than an oral complaint.</p></details>
+  <details><summary>Is my data safe?</summary>
+  <p>You send us your settlements by email, the analysis is done by a person, then the files are deleted from our inboxes after the report is delivered. No connection to your accounts, no bank statements kept.</p></details>
+  <details><summary>Which countries does it work in?</summary>
+  <p>Everywhere these platforms operate: DoorDash, Uber Eats, Grubhub, Postmates across the US. The formats differ, the checks are the same.</p></details>
+</div>
+
+<div class="card rv" id="inscription">
+  <h3 style="margin-top:0">Start now</h3>
+  <p>The demo is free. For the analysis ($39/month), payment is secured by Stripe:</p>
+  <p style="margin:18px 0"><a class="cta" href="https://buy.stripe.com/5kQ3co6hJ9Cr9Hj6bB3sI0q" rel="noopener" target="_blank">💳 Subscribe to PlateCheck — $39/month</a></p>
+  <p class="hint">Payment issue or question? Write to us — reply within 24 business hours:</p>
+  <form id="signform" onsubmit="return signup(event)" style="margin-top:8px">
+    <label>Your email</label>
+    <input type="email" id="se" placeholder="ton@email.com" required>
+    <label>Your city</label>
+    <input type="text" id="sc" placeholder="Austin, Denver, Miami…">
+    <label>Platforms you use</label>
+    <input type="text" id="sp" placeholder="DoorDash + Uber Eats + Grubhub">
+    <button type="submit">I prefer to be contacted</button>
+  </form>
+</div>
+
+<div class="card rv">
+  <h3 style="margin-top:0">⭐ Customer reviews</h3>
+  <div id="reviews"></div>
+  <hr style="border-color:var(--line);margin:16px 0">
+  <p class="hint">Tried PlateCheck? Leave your review (it goes straight to our team):</p>
+  <form id="revform" onsubmit="return sendReview(event)" style="margin-top:6px">
+    <label>Rating (1-5)</label>
+    <div class="stars-in" id="rv_stars" role="radiogroup" aria-label="Note">
+      <button type="button" class="star" data-v="1" aria-label="1 star">☆</button>
+      <button type="button" class="star" data-v="2" aria-label="2 stars">☆</button>
+      <button type="button" class="star" data-v="3" aria-label="3 stars">☆</button>
+      <button type="button" class="star" data-v="4" aria-label="4 stars">☆</button>
+      <button type="button" class="star" data-v="5" aria-label="5 stars">☆</button>
+      <input type="hidden" id="rv_score" value="5">
+    </div>
+    <p class="hint" id="rv_star_hint">Click a star to fill it — 5 = excellent.</p>
+    <label>Your email</label>
+    <input type="email" id="rv_email" placeholder="ton@email.com" required>
+    <label>Your comment</label>
+    <textarea id="rv_comment" rows="3" style="width:100%;background:#0d1116;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:10px" placeholder="What worked, what is missing…"></textarea>
+    <button type="submit">Send my review</button>
+  </form>
+</div>
+
+<footer>PlateCheck — find out what your platforms owe you. · <a href="mailto:nypsus.business@gmail.com" style="color:var(--mut)">Contact</a></footer>
+</main>
+<script>
+function money(n){return n.toLocaleString('en-US',{style:'currency',currency:'USD'})}
+function calc(){
+  var total=0;
+  ['g','u','d','j'].forEach(function(k){
+    var ca=parseFloat(document.getElementById(k+'_ca').value)||0;
+    var r=parseFloat(document.getElementById(k+'_reel').value)||0;
+    var c=parseFloat(document.getElementById(k+'_contrat').value)||0;
+    var diff=(r-c)/100*ca;
+    total+=diff;
+    var el=document.getElementById(k+'_res');
+    if(diff>0){el.textContent=money(diff);el.className='res';}
+    else if(diff<0){el.textContent='—';el.className='res zero';}
+    else {el.textContent='0';el.className='res zero';}
+  });
+  var out=document.getElementById('cb-out');
+  if(total>0){
+    document.getElementById('cb-total').textContent=money(total)+' / month';
+    document.getElementById('cb-annee').innerHTML='that is <b>'+money(total*12)+' / year</b> lost on these platforms — that is what PlateCheck can recover for you, for $39/month.';
+    out.style.display='block';
+  } else { out.style.display='none'; }
+}
+['g','u','d','j'].forEach(function(k){
+  [k+'_ca',k+'_reel',k+'_contrat'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',calc);
+  });
+});
+calc();
+/* —————— étoiles cliquables : note des avis —————— */
+(function(){
+  var wrap=document.getElementById('rv_stars');
+  if(!wrap)return;
+  var input=document.getElementById('rv_score');
+  var stars=[].slice.call(wrap.querySelectorAll('.star'));
+  function paint(v){
+    stars.forEach(function(s){
+      s.textContent=parseInt(s.getAttribute('data-v'),10)<=v?'★':'☆';
+      s.classList.toggle('on', parseInt(s.getAttribute('data-v'),10)<=v);
+    });
+  }
+  stars.forEach(function(s){
+    s.addEventListener('click',function(){
+      input.value=s.getAttribute('data-v');
+      paint(parseInt(s.getAttribute('data-v'),10));
+    });
+    s.addEventListener('mouseenter',function(){
+      paint(parseInt(s.getAttribute('data-v'),10));
+      wrap.setAttribute('data-hover','1');
+    });
+  });
+  wrap.addEventListener('mouseleave',function(){
+    if(wrap.getAttribute('data-hover')==='1'){paint(parseInt(input.value,10)||5); wrap.setAttribute('data-hover','0');}
+  });
+  paint(parseInt(input.value,10)||5);
+})();
+function signup(ev){
+  ev.preventDefault();
+  var em=document.getElementById('se').value.trim();
+  var ci=document.getElementById('sc').value.trim();
+  var pl=document.getElementById('sp').value.trim();
+  var body='Bonjour,\n\nI want to start the PlateCheck analysis.\n\nEmail : '+em+'\nVille : '+ci+'\nPlatforms : '+pl;
+  location.href='mailto:nypsus.business@gmail.com?subject='+encodeURIComponent('PlateCheck — subscription request ($39/month)')+'&body='+encodeURIComponent(body);
+  return false;
+}
+function sendReview(ev){
+  ev.preventDefault();
+  var s=document.getElementById('rv_score').value;
+  var e=document.getElementById('rv_email').value.trim();
+  var c=document.getElementById('rv_comment').value.trim();
+  if(!c){alert('Write your comment before sending.');return false;}
+  var body='Note : '+s+'/5\nCustomer : '+e+'\n\n'+c;
+  location.href='mailto:nypsus.business@gmail.com?subject='+encodeURIComponent('PlateCheck — Customer review ('+s+'/5)')+'&body='+encodeURIComponent(body);
+  return false;
+}
+/* Avis vérifiés (ajoutés après contrôle de l'équipe) */
+var REVIEWS=[];
+var rc=document.getElementById('reviews');
+if(REVIEWS.length===0){rc.innerHTML='<p class="hint">Aucun avis publié pour l\'instant — les premiers clients arrivent.</p>';}
+/* —————— effets de scroll (progressifs : rien ne disparaît sans JS) —————— */
+(function(){
+  var els=[].slice.call(document.querySelectorAll('.rv'));
+  if(!els.length)return;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  els.forEach(function(el){
+    el.style.opacity='0';
+    el.style.transform='translateY(24px)';
+    el.style.transition='opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)';
+  });
+  var shown=0, ticking=false;
+  function check(){
+    ticking=false;
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    els.forEach(function(el){
+      if(el._shown)return;
+      var r=el.getBoundingCustomerRect();
+      if(r.top<vh-40 && r.bottom>0){          // entré dans le viewport
+        el.style.opacity='1';
+        el.style.transform='translateY(0)';
+        el._shown=true; shown++;
+      }
+    });
+    if(shown>=els.length)window.removeEventListener('scroll',onScroll);
+  }
+  function onScroll(){
+    if(!ticking){ticking=true; requestAnimationFrame(check);}
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  check();                                      // état initial (éléments déjà visibles)
+  // Garde-fou : si aucune révélation ne se produit (environnement sans events scroll,
+  // iframe, bloqueur…), tout devient visible après 4 s — jamais de contenu caché.
+  setTimeout(function(){
+    els.forEach(function(el){
+      if(!el._shown){
+        el.style.opacity='1';
+        el.style.transform='translateY(0)';
+        el._shown=true;
+      }
+    });
+  }, 4000);
+})();
+</script>
+</body>
+</html>
